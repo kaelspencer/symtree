@@ -3,8 +3,20 @@
 from optparse import OptionParser
 import os.path
 
+class LogLevel:
+    Error = 0
+    Warning = 1
+    Verbose = 2
+
+log_level = LogLevel.Error
+
+def log(message, level):
+    if level <= log_level:
+        print message
+
 # Ensure the options are as expected.
 def init_options():
+    global log_level
     parser = OptionParser(usage="usage: %prog [options] SOURCE DEST")
 
     parser.add_option("-v", "--verbose", help="verbose output", action="store_true", dest="verbose", default=False)
@@ -18,10 +30,16 @@ def init_options():
     if len(args) != 2:
         parser.error("incorrect number of arguments: provide SOURCE and DEST")
 
+    if options.verbose:
+        log_level = LogLevel.Warning
+
+    if options.veryverbose:
+        log_level = LogLevel.Verbose
+
     source = os.path.abspath(args[0])
     dest = os.path.abspath(args[1])
-    print "Source: " + source
-    print "Dest  : " + dest
+    log("Source: " + source, LogLevel.Warning)
+    log("Dest  : " + dest, LogLevel.Warning)
 
     # If the source and dest are symlink, they could be nested. Default is to fail out unless user says they want to follow symlinks.
     if os.path.islink(source) and not options.follow:
