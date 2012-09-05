@@ -28,6 +28,8 @@ def init_options():
     parser.add_option("-c", "--create", help="create destination if it does not exist", action="store_true", dest="create", default=False)
     parser.add_option("-f", "--followsymlinks", help="causes symtree to follow symbolic links for source and destination folders",
         action="store_true", dest="follow", default=False)
+    parser.add_option("-o", "--overwritesymlinks", help="when set symtree will overwrite symlinks in the destination directory",
+        action="store_true", dest="overwrite", default=False)
 
     (options, args) = parser.parse_args()
 
@@ -95,15 +97,20 @@ def create_folder(folder):
 
 # Create link.
 def create_link(source, link_name):
-    if os.path.exists(link_name):
-        log("(" + link_name + ") alread exists. Skipping...", LogLevel.Warning)
-    else:
-        if os.path.lexists(link_name):
-            # symlink exists but is broken
-            os.remove(link_name)
+    global options
 
-        log("Linking file (" + source + ")", LogLevel.Verbose)
-        os.symlink(source, link_name)
+    if os.path.exists(link_name):
+        if options.overwrite:
+            os.remove(link_name)
+        else:
+            log("(" + link_name + ") alread exists. Skipping...", LogLevel.Warning)
+            return
+    elif os.path.lexists(link_name):
+        # symlink exists but is broken
+        os.remove(link_name)
+
+    log("Linking file (" + source + ")", LogLevel.Verbose)
+    os.symlink(source, link_name)
 
 def main():
     if not init_options():
