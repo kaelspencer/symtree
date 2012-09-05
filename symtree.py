@@ -38,23 +38,21 @@ def init_options():
     if options.veryverbose:
         log_level = LogLevel.Verbose
 
-    source = os.path.abspath(args[0])
-    dest = os.path.abspath(args[1])
-    log("Source: " + source, LogLevel.Warning)
-    log("Dest  : " + dest, LogLevel.Warning)
+    options.source = os.path.abspath(args[0])
+    options.dest = os.path.abspath(args[1])
+    log("Source: " + options.source, LogLevel.Warning)
+    log("Dest  : " + options.dest, LogLevel.Warning)
 
-    return check_paths(source, dest)
+    return check_paths(options.source, options.dest, options.follow)
 
 # Check the validity of the paths.
-def check_paths(source, dest):
-    global options
-
+def check_paths(source, dest, follow):
     # If the source and dest are symlink, they could be nested. Default is to fail out unless user says they want to follow symlinks.
-    if os.path.islink(source) and not options.follow:
+    if os.path.islink(source) and not follow:
         log("SOURCE is a symbolic link (enable --followsymlinks if this is intentional)", LogLevel.Error)
         return False
 
-    if os.path.islink(dest) and not options.follow:
+    if os.path.islink(dest) and not follow:
         log("DEST is a symbolic link (enable --followsymlinks if this is intentional)", LogLevel.Error)
         return False
 
@@ -67,8 +65,29 @@ def check_paths(source, dest):
         log("DEST is nested under SOURCE. This is not allowed.", LogLevel.Error)
         return False
 
+    return True
+
+# Start the loop
+def symtree(source, dest):
+    source = source + "/"
+    dest = dest + "/"
+
+    log("Entering " + source, LogLevel.Verbose)
+
+    for dir in os.listdir(source):
+        dir = source + dir
+        dest_dir = dest + dir
+
+        if os.path.isdir(dir):
+            symtree(dir, dest_dir)
+        elif os.path.isfile(dir):
+            log("Found file (" + dir + ")", LogLevel.Verbose)
+
 def main():
-    init_options()
+    if not init_options():
+        return
+
+    symtree(options.source, options.dest);
 
 if __name__ == "__main__":
     main()
