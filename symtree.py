@@ -12,6 +12,9 @@ log_level = LogLevel.Error
 options = []
 
 def log(message, level):
+    if level == LogLevel.Error:
+        message = "ERROR! " + message
+
     if level <= log_level:
         print message
 
@@ -75,17 +78,31 @@ def symtree(source, dest):
     log("Entering " + source, LogLevel.Verbose)
 
     for dir in os.listdir(source):
-        dir = source + dir
         dest_dir = dest + dir
+        dir = source + dir
 
         if os.path.isdir(dir):
+            create_folder(dest_dir)
             symtree(dir, dest_dir)
         elif os.path.isfile(dir):
             log("Found file (" + dir + ")", LogLevel.Verbose)
 
+# Create the folder if necessary.
+def create_folder(folder):
+    if not os.path.exists(folder):
+        log("Creating folder (" + folder + ")", LogLevel.Warning)
+        os.mkdir(folder)
+
 def main():
     if not init_options():
         return
+
+    if not os.path.exists(options.dest):
+        if options.create:
+            create_folder(options.dest)
+        else:
+            log("Destination does not exist (" + options.dest + ")", LogLevel.Error)
+            return
 
     symtree(options.source, options.dest);
 
