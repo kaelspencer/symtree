@@ -85,13 +85,25 @@ def symtree(source, dest):
             create_folder(dest_dir)
             symtree(dir, dest_dir)
         elif os.path.isfile(dir):
-            log("Found file (" + dir + ")", LogLevel.Verbose)
+            create_link(dir, dest_dir)
 
 # Create the folder if necessary.
 def create_folder(folder):
     if not os.path.exists(folder):
         log("Creating folder (" + folder + ")", LogLevel.Warning)
         os.mkdir(folder)
+
+# Create link.
+def create_link(source, link_name):
+    if os.path.exists(link_name):
+        log("(" + link_name + ") alread exists. Skipping...", LogLevel.Warning)
+    else:
+        if os.path.lexists(link_name):
+            # symlink exists but is broken
+            os.remove(link_name)
+
+        log("Linking file (" + source + ")", LogLevel.Verbose)
+        os.symlink(source, link_name)
 
 def main():
     if not init_options():
