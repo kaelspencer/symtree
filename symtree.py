@@ -33,6 +33,7 @@ def init_options():
         action="store_true", dest="follow", default=False)
     parser.add_option("-o", "--overwritesymlinks", help="when set symtree will overwrite symlinks in the destination directory",
         action="store_true", dest="overwrite", default=False)
+    parser.add_option("--settings", help="override the default settings file of symtree.json", metavar="SETTINGS", default="symtree.json")
 
     (options, args) = parser.parse_args()
 
@@ -128,11 +129,10 @@ def load_settings(file):
         log("IO error({0}): {1}".format(e.errno, e.strerror), LogLevel.Error)
 
 def main():
-
     if not init_options():
         return
 
-    load_settings("symtree.json")
+    load_settings(options.settings)
 
     if not os.path.exists(options.dest):
         if options.create:
