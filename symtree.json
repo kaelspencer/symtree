@@ -1,0 +1,7 @@
+// These are the settings for symtree. This is a JSON file.
+// Each setting has a default built into the script, but for ease of use, the defaults are here as well.
+{
+    "override": [
+        {":?": "_"}
+    ]
+}

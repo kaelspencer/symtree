@@ -2,6 +2,9 @@
 
 from optparse import OptionParser
 import os.path
+import json
+import re
+from pprint import pprint
 
 class LogLevel:
     Error = 0
@@ -112,9 +115,24 @@ def create_link(source, link_name):
     log("Linking file (" + source + ")", LogLevel.Verbose)
     os.symlink(source, link_name)
 
+def load_settings(file):
+    try:
+        f = open(file)
+        json_data = f.read()
+        f.close()
+
+        json_data = re.sub("//.*?\n", "", json_data)
+        settings = json.loads(json_data)
+        pprint(settings)
+    except IOError as e:
+        log("IO error({0}): {1}".format(e.errno, e.strerror), LogLevel.Error)
+
 def main():
+
     if not init_options():
         return
+
+    load_settings("symtree.json")
 
     if not os.path.exists(options.dest):
         if options.create:
