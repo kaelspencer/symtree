@@ -1,6 +1,6 @@
 #!/usr/share/python/
 
-from optparse import OptionParser
+import argparse
 import os.path
 import json
 import re
@@ -24,22 +24,19 @@ def log(message, level):
 # Ensure the options are as expected.
 def init_options():
     global log_level, options
-    parser = OptionParser(usage="usage: %prog [options] SOURCE DEST")
+    parser = argparse.ArgumentParser(description="Create a a mirrored folder structure with symlinked files.")
 
-    parser.add_option("-v", "--verbose", help="verbose output", action="store_true", dest="verbose", default=False)
-    parser.add_option("-V", "--veryverbose", help="insanely verbose output", action="store_true", dest="veryverbose", default=False)
-    parser.add_option("-c", "--create", help="create destination if it does not exist", action="store_true", dest="create", default=False)
-    parser.add_option("-f", "--followsymlinks", help="causes symtree to follow symbolic links for source and destination folders",
-        action="store_true", dest="follow", default=False)
-    parser.add_option("-o", "--overwritesymlinks", help="when set symtree will overwrite symlinks in the destination directory",
-        action="store_true", dest="overwrite", default=False)
-    parser.add_option("--settings", help="override the default settings file of symtree.json", metavar="SETTINGS", default="symtree.json")
+    parser.add_argument('-v', '--verbose', action='store_true', help='verbose output')
+    parser.add_argument('-V', '--veryverbose', action='store_true', help='insanely verbose output')
+    parser.add_argument('-c', '--create', action='store_true', help='create destination if it does not exist')
+    parser.add_argument('-f', '--followsymlinks', action='store_true', help='symtree will follow symbolic links for source folders')
+    parser.add_argument('-o', '--overwritesymlinks', action='store_true', help='symtree will overwrite symlinks in the destination directory')
+    parser.add_argument('--settings', default='symtree.json', help='override the default settings file of symtree.json')
+    parser.add_argument('source', help='the source directory')
+    parser.add_argument('dest', help='the target directory, will be the highest level mirror of source')
 
-    (options, args) = parser.parse_args()
-
-    # Get the positional arguments SOURCE and DEST
-    if len(args) != 2:
-        parser.error("incorrect number of arguments: provide SOURCE and DEST")
+    options = parser.parse_args()
+    pprint(options)
 
     if options.verbose:
         log_level = LogLevel.Warning
@@ -47,12 +44,12 @@ def init_options():
     if options.veryverbose:
         log_level = LogLevel.Verbose
 
-    options.source = os.path.abspath(args[0])
-    options.dest = os.path.abspath(args[1])
+    options.source = os.path.abspath(options.source)
+    options.dest = os.path.abspath(options.dest)
     log("Source: " + options.source, LogLevel.Warning)
     log("Dest  : " + options.dest, LogLevel.Warning)
 
-    return check_paths(options.source, options.dest, options.follow)
+    return check_paths(options.source, options.dest, options.followsymlinks)
 
 # Check the validity of the paths.
 def check_paths(source, dest, follow):
