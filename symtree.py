@@ -78,10 +78,10 @@ def symtree(source, dest):
     source = source + "/"
     dest = dest + "/"
 
-    log("Entering " + source, LogLevel.Verbose)
+    log("\nEntering " + source + "\n", LogLevel.Verbose)
 
     for dir in os.listdir(source):
-        dest_dir = dest + dir
+        dest_dir = dest + normalize_string(dir)
         dir = source + dir
 
         if os.path.isdir(dir):
@@ -101,7 +101,7 @@ def create_link(source, link_name):
     global options
 
     if os.path.exists(link_name):
-        if options.overwrite:
+        if options.overwritesymlinks:
             os.remove(link_name)
         else:
             log("(" + link_name + ") alread exists. Skipping...", LogLevel.Warning)
@@ -124,6 +124,14 @@ def load_settings(file):
         pprint(settings)
     except IOError as e:
         log("IO error({0}): {1}".format(e.errno, e.strerror), LogLevel.Error)
+
+def normalize_string(source):
+    result = re.sub(r'[<>:"\\|?*"]', '', source)
+
+    if source != result:
+        log('Renaming (' + source + ') to (' + result + ')', LogLevel.Verbose)
+
+    return result
 
 def main():
     if not init_options():
