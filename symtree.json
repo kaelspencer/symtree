@@ -4,7 +4,7 @@
     // Due to the implementation of dicts in Python, the ordering here cannot be guaranteed.
     // Note: These strings need to be escaped. For some reason, if you need to replace a backslash, you need
     //       to double escape it. As shown below, \\\\ will replace a single backslash.
-    "override": {
+    "regular_expressions": {
         "<>\"\\\\|*": "_",
         "?": "",
         ":": " -"

@@ -129,11 +129,11 @@ def load_settings(file):
         json_data = re.sub("//.*?\n", "", json_data)
         settings = json.loads(json_data)
 
-        if 'override' in settings:
+        if 'regular_expressions' in settings:
             # Remove default.
             regexes = []
 
-            for regex, replace in settings['override'].items():
+            for regex, replace in settings['regular_expressions'].items():
                 log('Loading regex from file: s/' + regex + '/' + replace + '/g', LogLevel.Warning)
                 regexes.append({ 'regex': re.compile('[' + regex + ']'), 'replace': replace, 'regex_raw': regex})
         else:
