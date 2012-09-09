@@ -25,7 +25,7 @@ def log(message, level):
 # Ensure the options are as expected.
 def init_options():
     global log_level, options
-    parser = argparse.ArgumentParser(description="Create a a mirrored folder structure with symlinked files.")
+    parser = argparse.ArgumentParser(description="Create a mirrored folder structure with symlinked files.")
 
     parser.add_argument('-v', '--verbose', action='store_true', help='verbose output')
     parser.add_argument('-V', '--veryverbose', action='store_true', help='insanely verbose output')
