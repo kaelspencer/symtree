@@ -23,6 +23,7 @@ Basic usage `python symtree.py SOURCE DEST`. To mirror a folder `files` into a f
     optional arguments:
       -h, --help            show this help message and exit
       -c, --create          create destination if it does not exist
+      -d, --disableregex    disable the usage of regular expressions
       -f, --followsymlinks  symtree will follow symbolic links for source folders
       -o, --overwritesymlinks
                             symtree will overwrite symlinks in the destination

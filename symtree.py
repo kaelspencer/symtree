@@ -28,6 +28,7 @@ def init_options():
     parser = argparse.ArgumentParser(description="Create a mirrored folder structure with symlinked files.")
 
     parser.add_argument('-c', '--create', action='store_true', help='create destination if it does not exist')
+    parser.add_argument('-d', '--disableregex', action='store_true', help='disable the usage of regular expressions')
     parser.add_argument('-f', '--followsymlinks', action='store_true', help='symtree will follow symbolic links for source folders')
     parser.add_argument('-o', '--overwritesymlinks', action='store_true', help='symtree will overwrite symlinks in the destination directory')
     parser.add_argument('-v', '--verbose', action='store_true', help='verbose output')
@@ -81,7 +82,11 @@ def symtree(source, dest):
     log("\nEntering " + source + "\n", LogLevel.Verbose)
 
     for dir in os.listdir(source):
-        dest_dir = dest + normalize_string(dir)
+        if options.disableregex:
+            dest_dir = dest + dir
+        else:
+            dest_dir = dest + normalize_string(dir)
+
         dir = source + dir
 
         if os.path.isdir(dir):
