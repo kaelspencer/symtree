@@ -1,7 +1,12 @@
 // These are the settings for symtree. This is a JSON file.
 // Each setting has a default built into the script, but for ease of use, the defaults are here as well.
 {
-    "override": [
-        {":?": "_"}
-    ]
+    // Due to the implementation of dicts in Python, the ordering here cannot be guaranteed.
+    // Note: These strings need to be escaped. For some reason, if you need to replace a backslash, you need
+    //       to double escape it. As shown below, \\\\ will replace a single backslash.
+    "override": {
+        "<>\"\\\\|*": "_",
+        "?": "",
+        ":": " -"
+    }
 }

@@ -4,7 +4,7 @@ import argparse
 import os.path
 import json
 import re
-from pprint import pprint
+import pprint
 
 class LogLevel:
     Error = 0
@@ -13,6 +13,7 @@ class LogLevel:
 
 log_level = LogLevel.Error
 options = []
+regexes = []
 
 def log(message, level):
     if level == LogLevel.Error:
@@ -36,7 +37,6 @@ def init_options():
     parser.add_argument('dest', help='the target directory, will be the highest level mirror of source')
 
     options = parser.parse_args()
-    pprint(options)
 
     if options.verbose:
         log_level = LogLevel.Warning
@@ -113,7 +113,14 @@ def create_link(source, link_name):
     log("Linking file (" + source + ")", LogLevel.Verbose)
     os.symlink(source, link_name)
 
+# Load the settings file.
 def load_settings(file):
+    global regexes
+
+    # Add default regex in case of failure.
+    default_regex_raw = r'<>:"\\|?*'
+    regexes.append({ 'regex': re.compile('[' + default_regex_raw + ']'), 'replace': '_', 'regex_raw': default_regex_raw})
+
     try:
         f = open(file)
         json_data = f.read()
@@ -121,12 +128,29 @@ def load_settings(file):
 
         json_data = re.sub("//.*?\n", "", json_data)
         settings = json.loads(json_data)
-        pprint(settings)
+
+        if 'override' in settings:
+            # Remove default.
+            regexes = []
+
+            for regex, replace in settings['override'].items():
+                log('Loading regex from file: s/' + regex + '/' + replace + '/g', LogLevel.Warning)
+                regexes.append({ 'regex': re.compile('[' + regex + ']'), 'replace': replace, 'regex_raw': regex})
+        else:
+            # Append default regex.
+            regexes.append({ 'regex': re.compile('[' + default_regex_raw + ']'), 'replace': '_', 'regex_raw': default_regex_raw})
+
     except IOError as e:
         log("IO error({0}): {1}".format(e.errno, e.strerror), LogLevel.Error)
 
+    log(pprint.pformat(regexes), LogLevel.Warning)
+
+# Apply the regular expression to the string to normalize it.
 def normalize_string(source):
-    result = re.sub(r'[<>:"\\|?*"]', '', source)
+    result = source
+
+    for regex in regexes:
+        result = re.sub(regex['regex'], regex['replace'], result)
 
     if source != result:
         log('Renaming (' + source + ') to (' + result + ')', LogLevel.Verbose)
