@@ -85,8 +85,11 @@ def symtree(source, dest):
         dir = source + dir
 
         if os.path.isdir(dir):
-            create_folder(dest_dir)
-            symtree(dir, dest_dir)
+            if not os.path.islink(dir) or options.followsymlinks:
+                create_folder(dest_dir)
+                symtree(dir, dest_dir)
+            else:
+                log('Ignoring symlink source folder (' + dir + ')', LogLevel.Warning)
         elif os.path.isfile(dir):
             create_link(dir, dest_dir)
 
