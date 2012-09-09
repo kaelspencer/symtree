@@ -10,7 +10,7 @@ Usage
 
 Basic usage `python symtree.py SOURCE DEST`. To mirror a folder `files` into a folder `windows_files` you would use `python symtree.py files windows_files`.
 
-    usage: symtree.py [-h] [-v] [-V] [-c] [-f] [-o] [--settings SETTINGS]
+    usage: symtree.py [-h] [-c] [-f] [-o] [-v] [-V] [--settings SETTINGS]
                       source dest
 
     Create a mirrored folder structure with symlinked files.
@@ -22,13 +22,13 @@ Basic usage `python symtree.py SOURCE DEST`. To mirror a folder `files` into a f
 
     optional arguments:
       -h, --help            show this help message and exit
-      -v, --verbose         verbose output
-      -V, --veryverbose     insanely verbose output
       -c, --create          create destination if it does not exist
       -f, --followsymlinks  symtree will follow symbolic links for source folders
       -o, --overwritesymlinks
                             symtree will overwrite symlinks in the destination
                             directory
+      -v, --verbose         verbose output
+      -V, --veryverbose     insanely verbose output
       --settings SETTINGS   override the default settings file of symtree.json
 
 Settings File

@@ -27,11 +27,11 @@ def init_options():
     global log_level, options
     parser = argparse.ArgumentParser(description="Create a mirrored folder structure with symlinked files.")
 
-    parser.add_argument('-v', '--verbose', action='store_true', help='verbose output')
-    parser.add_argument('-V', '--veryverbose', action='store_true', help='insanely verbose output')
     parser.add_argument('-c', '--create', action='store_true', help='create destination if it does not exist')
     parser.add_argument('-f', '--followsymlinks', action='store_true', help='symtree will follow symbolic links for source folders')
     parser.add_argument('-o', '--overwritesymlinks', action='store_true', help='symtree will overwrite symlinks in the destination directory')
+    parser.add_argument('-v', '--verbose', action='store_true', help='verbose output')
+    parser.add_argument('-V', '--veryverbose', action='store_true', help='insanely verbose output')
     parser.add_argument('--settings', default='symtree.json', help='override the default settings file of symtree.json')
     parser.add_argument('source', help='the source directory')
     parser.add_argument('dest', help='the target directory, will be the highest level mirror of source')
