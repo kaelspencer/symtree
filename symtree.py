@@ -158,7 +158,7 @@ def normalize_string(source):
     result = source
 
     for regex in regexes:
-        result = re.sub(regex['regex'], regex['replace'], result)
+        result = re.sub(regex['regex'], regex['replace'].encode('utf-8'), result)
 
     if source != result:
         log('Renaming (' + source + ') to (' + result + ')', LogLevel.Verbose)
