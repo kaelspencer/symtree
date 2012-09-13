@@ -3,7 +3,7 @@ symtree
 
 A tool to create a mirrored symlink directory tree. The main use case is when the source files have characters in their name that are not always desirable. For example, a tree of files that contain Unix valid characters (eg, :"*>) that you want to share with Windows via Samba. You can use this tool to create file names that are valid in Windows without duplicating the content.
 
-Folders are created in the target directory. These are actual folders and not links. The files are symbolic links to the source folder. Optionally, enabled by default, a regular expression can be ran on each folder and file name before the destination is created.
+Folders are created in the target directory. These are actual folders and not links. The files are symbolic links to the source folder. Optionally, enabled by default, a regular expression can be run on each folder and file name before the destination is created.
 
 Usage
 -----
